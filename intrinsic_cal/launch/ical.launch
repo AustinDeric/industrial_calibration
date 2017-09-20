@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<launch>
+
+<arg name="ir" default="false" />
+<arg name="camera_name" default="camera"/>
+
+<node pkg="intrinsic_cal" type="rail_ical" name="rail_intrinsic_calibration" output="screen" >
+
+          <param name="camera_name" value="/$(arg camera_name)/ir" if="$(arg ir)"/>
+          <param name="image_topic" value="/$(arg camera_name)/ir/image" if="$(arg ir)"/>
+
+          <param name="camera_name" value="$(arg camera_name)" unless="$(arg ir)"/>
+          <param name="image_topic" value="$(arg camera_name)/image_raw" unless="$(arg ir)"/>
+          <remap from="color_image" to="/$(arg camera_name)/image_raw" unless="$(arg ir)"/>
+
+          <param name="target_rows" value="18" />
+          <param name="target_cols" value="24" />
+          <param name="target_circle_dia" value="0.015" />
+          <param name="target_spacing" value="0.0254" />
+          <param name="num_camera_locations" value="12" />
+          <param name="camera_spacing" value="0.02" />
+          <param name="target_to_rail_distance" value="1.0" />
+
+          <param name="image_width" value="640" />
+          <param name="image_height" value="480" />
+
+          <param name="qx" value="0.707" />
+          <param name="qy" value="0" />
+          <param name="qz" value="0" />
+          <param name="qw" value="0.707" />
+
+          <param name="use_circle_detector" value="true" />
+
+
+
+     </node>
+
+  
+  <node name="observation_view" pkg="image_view" type="image_view" >
+      <remap to="/observer_results_image" from="image"/>
+  </node>
+
+  <group unless="$(arg ir)" >
+    <!--node name="camera_view" pkg="image_view" type="image_view" >
+        <remap to="$(arg camera_name)/image_color" from="image"/>
+    </node-->
+
+    <node name="center_view" pkg="image_view" type="image_view" >
+        <remap to="/color_image_center" from="image"/>
+    </node>
+  </group>
+
+</launch>
