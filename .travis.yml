@@ -9,6 +9,7 @@ notifications:
     on_failure: always
 env:
   global:
+    - MAKEFLAGS="-j 4"
     - ROS_DISTRO=kinetic
     - UPSTREAM_WORKSPACE=file
     - ROSINSTALL_FILENAME=industrial_calibration.rosinstall
@@ -16,6 +17,7 @@ env:
   matrix:
     - ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu
 install:
+  - travis_wait 30 mvn install
   - git clone https://github.com/ros-industrial/industrial_ci.git .ci_config
 script: 
   - source .ci_config/travis.sh
